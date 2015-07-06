@@ -1,0 +1,52 @@
+#WIZserver CommandHelper sources
+#WS
+
+#aliases.msa
+*:/ws [$p = ''] = if($p == '') {_ws_check(player())}else{_ws_check($p)}
+*:/wsadmin [$o = ''] [$p = ''] [$c = '']= >>>
+	if($o == '' && $p == '' && $c == '') {
+		msg(colorize('&c사용법: /wsadmin <give/take/donate> <player> <amount>')) // ONLY "NET.WIZSS.ADMIN" PERMISSIONS!
+	}
+	if(has_permission(player(), 'net.wizss.admin') != true) {
+		msg(colorize('&c권한이 없습니다.'));
+		} else {
+		if($o == 'give') {
+			msg(colorize('&a'.$p.'님에게 '.$c.' WS를 지급하였습니다.'));
+			_ws_give($p, $c);
+			} else {
+			if($o == 'take') {
+				msg(colorize('&a'.$p.'님에게 '.$c.' WS를 회수하였습니다.'));
+				_ws_take($p, $c);
+				} else {
+				if($o == 'donate') {
+					msg(colorize('&a'.$p.'님에게 '.$c.' WS를 지급하였습니다.'));
+					broadcast(colorize('&b"'.$p.'"&a님께서 '.$c.'원 후원으로 '.$c.' WS를 획득하셨습니다 !'));
+					_ws_give($p, $c);
+				}
+			}
+		}
+	}
+<<<
+
+#main.ms
+bind(player_join, null, null, @e,
+	if(get_value(player().value_1st_1_startup) != 'Y') {
+		query(ws, 'INSERT INTO `wiz-wizserver`.`donate_info` (`playername`, `credit`) VALUES (?, ?)',player(),'0');
+		store_value(player().value_1st_1_startup, 'Y');
+	}
+)
+
+#auto_include.ms
+proc(_ws_give, @player, @ws, query(ws, 'update `donate_info` set `credit` = `credit`+? where `donate_info`.`playername`=?', @ws, @player))
+proc(_ws_take, @player, @ws, query(ws, 'update `donate_info` set `credit` = `credit`-? where `donate_info`.`playername`=?', @ws, @player))
+proc(_ws_set, @player, @ws, query(ws, 'UPDATE `donate_info` SET `credit` = ? WHERE `credit`.`playername`=?', @ws, player()))
+proc(_ws_check, @player,
+	msg(colorize('&6보유 WS: &a'._ws_lookup(@player).' WS'))
+)
+proc(_ws_lookup, @player,
+	@result = query(ws, 'SELECT * FROM `donate_info` WHERE playername=?', @player);
+	foreach(@result, @row) {
+		@result = @row['credit'];
+	}
+	return(@result);
+)
