@@ -1,0 +1,117 @@
+#WIZserver CommandHelper sources
+#Bank
+
+#aliases.msa
+*:/통장 [$o = ''] [$a = '0']= >>>
+	@bank_status = get_value(player().bank_status);
+	@bank_limit = get_value(player().bank_limit);
+	if($o == '') {
+		msg(colorize('&7_____________________| &b통장 도움말 &7|_____________________'));
+		msg(colorize('&b/통장 입금 <수량>&7: 입력한 수량 만큼 입금합니다.'));
+		msg(colorize('&b/통장 출금 <수량>&7: 입력한 수량 만큼 출금합니다.'));
+		msg(colorize('&b/통장 한도 <수량>&7: 수량을 입력하지 않으면 통장 한도를 확인하고, 입력할 경우 통장 한도를 늘립니다.'));
+		msg();
+		msg(colorize('&7_____________________| &b내 통장 상태 &7|_____________________'));
+		msg(colorize('&b통장 사용량&7: '.@bank_status.'&b/&7'.@bank_limit.' 크레딧'));
+	}
+	if($o == 'log') {
+		if(@bank_status >= '0' && '10' > @bank_status) {
+			@string = '1'
+		}
+		if(@bank_status >= '10' && '100' > @bank_status) {
+			@string = '2'
+		}
+		if(@bank_status >= '100' && '1000' > @bank_status) {
+			@string = '3'
+		}
+		if(@bank_status >= '1000' && '10000' > @bank_status) {
+			@string = '4'
+		}
+		if(@bank_status >= '10000' && '100000' > @bank_status) {
+			@string = '5'
+		}
+		if(@bank_status >= '100000' && '1000000' > @bank_status) {
+			@string = '6'
+		}
+		if(@bank_status >= '1000000' && '10000000' > @bank_status) {
+			@string = '7'
+		}
+		if(@bank_status >= '10000000' && '100000000' > @bank_status) {
+			@string = '8'
+		}
+		if(@bank_status >= '100000000' && '1000000000' > @bank_status) {
+			@string = '9'
+		}
+		if(simple_date(M,time(),Japan) < '10') {
+			@M = '0'.simple_date(M,time(),Japan);
+		}
+		@date = ''.simple_date(Y,time(),Japan).''.@M.''.simple_date(d,time(),Japan).'';
+		@log_token = multiply(@bank_status,@string);
+		@log_token = multiply(@log_token,8);
+		@log_token_0 = divide(@log_token,2);
+		@log_token_f = 'CTS_'.@date.'-'.@string.'-'.@log_token_0.'';
+		@bank_limit_1 = substr(@log_token_f,13,14);
+		@bank_limit_support_1 = length(@log_token_f);
+		@bank_limit_2 = substr(@log_token_f,15,@bank_limit_support_1);
+		@bank_limit_3 = multiply(@bank_limit_2,2);
+		@bank_limit_4 = divide(@bank_limit_3,8);
+		@bank_limit_5 = divide(@bank_limit_4,@bank_limit_1);
+		@bank_status = @bank_limit_5;
+		msg(colorize('&7______________________| &b통장 &7|______________________'));
+		msg('OWNER: '.player());
+		msg('DATE: '.@date);
+		msg('BALANCE: '.@bank_status.' CTS');
+		msg('LIMIT: '.@bank_limit.' CTS');
+		msg('STRING: '.@bank_limit_1);
+		msg('LENGHT: '.@bank_limit_support_1);
+		msg('PASS: '.@bank_limit_2);
+		msg('TOKEN: '.@log_token_f.' CTS');
+		msg('Copr. ForceDP 2015 / Encrypted token by WIZstudios, WIZserver')
+		#msg(''.@bank_limit_1.' '.@bank_limit_2.' '.@bank_limit_3.' '.@bank_limit_4.' '.@bank_limit_5.' '.@bank_limit_support_1.'');
+	}
+	if($o == '입금') {
+		if(acc_balance(player()) < $a) {
+			@credit = subtract($a,acc_balance(player()));
+			msg(colorize('&4[&c경고&4] &7'.@credit.' 크레딧이 부족합니다.'));
+			} else {
+			@bank_new = add(@bank_status,$a);
+			if(@bank_limit < @bank_status || @bank_limit < $a || @bank_limit < @bank_new) {
+				msg(colorize('&4[&c경고&4] &7통장 한도가 부족합니다.'));
+				} else {
+				acc_subtract(player(),$a);
+				store_value(player().bank_status,@bank_new);
+				@bank_status = get_value(player().bank_status);
+				@bank_limit = get_value(player().bank_limit);
+				msg(colorize('&3[&b성공&3] &7'.$a.' 크레딧이 성공적으로 입금되었습니다. 보유 크레딧은 '.acc_balance(player()).' 크레딧, 통장 보유액은 '.@bank_status.'&b/&7'.@bank_limit.' 크레딧 입니다.'));
+			}
+		}
+	}
+	if($o == '출금') {
+		if(@bank_status >= $a) {
+			@bank_new = subtract(@bank_status,$a);
+			store_value(player().bank_status,@bank_new);
+			acc_add(player(),$a);
+			@bank_status = get_value(player().bank_status);
+			@bank_limit = get_value(player().bank_limit);
+			msg(colorize('&3[&b성공&3] &7'.$a.' 크레딧이 성공적으로 출금되었습니다. 보유 크레딧은 '.acc_balance(player()).' 크레딧, 통장 보유액은 '.@bank_status.'&b/&7'.@bank_limit.' 크레딧 입니다.'));
+		}
+	}
+	if($o == '한도') {
+		if($a == '0') {
+			run_cmd('/통장');
+			} else {
+			if(acc_balance(player()) >= $a) {
+				@bank_new = add(@bank_limit,$a);
+				@bank_limit_credit = multiply($a,2);
+				acc_subtract(player(),@bank_limit_credit);
+				store_value(player().bank_limit,@bank_new);
+				@bank_status = get_value(player().bank_status);
+				@bank_limit = get_value(player().bank_limit);
+				msg(colorize('&3[&b성공&3] &7'.$a.' 통장 한도가 증가하였습니다. 보유 크레딧은 '.acc_balance(player()).' 크레딧, 통장 보유액은 '.@bank_status.'&b/&7'.@bank_limit.' 크레딧 입니다.'));
+				} else {
+				@credit = subtract($a,acc_balance(player()));
+				msg(colorize('&4[&c경고&4] &7'.@credit.' 크레딧이 부족합니다.'));
+			}
+		}
+	}
+<<<

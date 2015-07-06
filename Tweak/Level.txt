@@ -1,0 +1,121 @@
+#WIZserver CommandHelper sources
+#Level
+
+#aliases.msa
+*:/레벨 [$o = ''] [$n = ''] [$v = '']= >>>
+	if($o == 'connect') {
+		@working = 'Y';
+		if(get_value(player().level_player) <= '0') {
+			@level = '0';
+			@suffix = '&2[&aLv.'.@level.'&2]&r'
+			store_value(player().level_player, @level);
+			runas(~console, '/pex user '.player().' suffix '.@suffix);
+		}
+	}
+	if($o == '업') {
+		@working = 'Y';
+		@level = add(get_value(player().level_player),1);
+		@credit = multiply(@level,1000);
+		if(acc_balance(player()) >= @credit) {
+			acc_subtract(player(),@credit);
+			@suffix = '&2[&aLv.'.@level.'&2]&r'
+			store_value(player().level_player, @level);
+			runas(~console, '/pex user '.player().' suffix '.@suffix);
+			broadcast(colorize('&a'.player().'님의 레벨이 '.@level.'로 상승하였습니다! 축하해주세요!'));
+			launch_firework(ploc(player()),array(flicker: true, trail: true, colors: array('GREEN'), fade: array('GREEN'), type: BALL_LARGE));
+			} else {
+			msg(colorize('&c잔액이 부족합니다.'));
+		}
+	}
+	if($o == '효과') {
+		@working = 'Y';
+		if($n == '') {
+			msg(colorize('&7_____________________| &b효과 도움말 &7|_____________________'));
+			msg(colorize('&b/레벨 효과 해제&7: 모든 효과를 해제합니다.'));
+			if(get_value(player().level_player) >= '2') {
+				msg(colorize('&b/레벨 효과 체력&7: 현재 레벨 수 만큼의 가능한 체력 최대치까지 설정합니다.'));
+			}
+			if(get_value(player().level_player) >= '10') {
+				msg(colorize('&b/레벨 효과 야간투시&7: 야간투시를 활성화 합니다.'));
+			}
+			if(get_value(player().level_player) >= '20') {
+				msg(colorize('&b/레벨 효과 신속&7: 달리기 속도를 늘립니다.'));
+			}
+			if(get_value(player().level_player) >= '30') {
+				msg(colorize('&b/레벨 효과 성급함&7: 블럭을 캐는 속도를 빠르게 합니다.'));
+			}
+			if(get_value(player().level_player) >= '40') {
+				msg(colorize('&b/레벨 효과 힘&7: 몹의 체력을 닳게하는 속도를 빠르게 합니다.'));
+			}
+			if(get_value(player().level_player) >= '50') {
+				msg(colorize('&b/레벨 효과 포화&7: 허기를 해소하는 속도를 빠르게 합니다.'));
+			}
+		}
+		if($n == '해제') {
+			sudo('/effect '.player().' clear');
+			msg(colorize('&a해제 완료'));
+		}
+		if($n == '체력') {
+			if(get_value(player().level_effect_health) == null) {
+				store_value(player().level_effect_health, 'Y');
+				@health = add(10,get_value(player().level_player));
+				sudo('/hp s '.player().' '.@health);
+				msg(colorize('&a설정 완료'));
+				set_timeout(60000, closure(){
+					clear_value(player().level_effect_health);
+					msg(colorize('&a이제 다시 '체력' 효과 명령어를 입력하실 수 있습니다.'));
+				});
+				} else {
+				msg(colorize('&c당신은 "체력" 효과 명령어를 사용할 권한이 없습니다.'));
+				msg(colorize('&c쿨타임 시간 문제.'));
+			}
+		}
+		if($n == '야간투시') {
+			if(get_value(player().level_player) >= '10') {
+				sudo('/effect '.player().' 16 99999 1');
+				msg(colorize('&a설정 완료'));
+				} else {
+				msg(colorize('&c당신은 "야간투시" 효과 명령어를 사용할 권한이 없습니다.'));
+			}
+		}
+		if($n == '신속') {
+			if(get_value(player().level_player) >= '20') {
+				sudo('/effect '.player().' 1 99999 0');
+				msg(colorize('&a설정 완료'));
+				} else {
+				msg(colorize('&c당신은 "신속" 효과 명령어를 사용할 권한이 없습니다.'));
+			}
+		}
+		if($n == '성급함') {
+			if(get_value(player().level_player) >= '30') {
+				sudo('/effect '.player().' 3 99999 0');
+				msg(colorize('&a설정 완료'));
+				} else {
+				msg(colorize('&c당신은 "성급함" 효과 명령어를 사용할 권한이 없습니다.'));
+			}
+		}
+		if($n == '힘') {
+			if(get_value(player().level_player) >= '40') {
+				sudo('/effect '.player().' 5 99999 0');
+				msg(colorize('&a설정 완료'));
+				} else {
+				msg(colorize('&c당신은 "힘" 효과 명령어를 사용할 권한이 없습니다.'));
+			}
+		}
+		if($n == '포화') {
+			if(get_value(player().level_player) >= '50') {
+				sudo('/effect '.player().' 23 99999 9');
+				msg(colorize('&a설정 완료'));
+				} else {
+				msg(colorize('&c당신은 "포화" 효과 명령어를 사용할 권한이 없습니다.'));
+			}
+		}
+	}
+	if(@working != 'Y') {
+		msg(colorize('&7_____________________| &b레벨 도움말 &7|_____________________'));
+		msg(colorize('&b/레벨 업&7: 레벨을 올립니다. (비용: 자신이 올리려는 레벨 x 1000 크레딧)'));
+		msg(colorize('&b/레벨 효과&7: 자신의 레벨에서 사용할 수 있는 효과를 확인합니다.'));
+		msg(colorize('&7_____________________| &b내 레벨 상태 &7|_____________________'));
+		msg(colorize('&b레벨&7: '.get_value(player().level_player)));
+	}
+<<<

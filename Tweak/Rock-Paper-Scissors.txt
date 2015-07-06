@@ -1,0 +1,59 @@
+#WIZserver CommandHelper sources
+#Rock-Paper-Scissors
+
+#aliases.msa
+*:/가위바위보 [$u = '']= >>>
+	if($u == '') {
+		msg(colorize('&c사용법: /가위바위보 <가위/바위/보>'));
+		} else {
+		if(get_value(player().game_rps_ready) == null) {
+			if($u == '가위') {@user = '0';}
+			if($u == '바위') {@user = '1';}
+			if($u == '보') {@user = '2';}
+			if($u == '묵') {@user = '0';}
+			if($u == '찌') {@user = '1';}
+			if($u == '빠') {@user = '2';}
+			@rand = rand(0,3);
+			if(@user == '0' && @rand == '1') {@m = 'lose';}
+			if(@user == '0' && @rand == '2') {@m = 'win';}
+			if(@user == '1' && @rand == '0') {@m = 'win';}
+			if(@user == '1' && @rand == '2') {@m = 'lose';}
+			if(@user == '2' && @rand == '0') {@m = 'lose';}
+			if(@user == '2' && @rand == '1') {@m = 'win';}
+			if(@user == @rand) {msg(colorize('&6[&e무승부&6] 가위바위보를 다시 해주세요!'));}
+			if(@m == 'lose') {msg(colorize('&4[&c패배&4] &6졌습니다!, 15분 후 다시 시도해주세요~'));}
+			if(@m == 'win') {
+				@mine = rand(1,5);
+				if(@mine == '1') {
+					@mine = '263';
+					@mine_name = '&7석탄&6';
+				}
+				if(@mine == '2') {
+					@mine = '265';
+					@mine_name = '&f철&6';
+				}
+				if(@mine == '3') {
+					@mine = '266';
+					@mine_name = '&l금&r&6';
+				}
+				if(@mine == '4') {
+					@mine = '264';
+					@mine_name = '&b다이아몬드&6';
+				}
+				if(@mine == '5') {
+					@mine = '388';
+					@mine_name = '&a에메랄드&6';
+				}
+				msg(colorize('&3[&b승리&3] &6이겼습니다!, 축하금으로 '.@mine_name.' 16개를 드립니다&o!'));
+				sudo('/give '.player().' '.@mine.' 16');
+			}
+			store_value(player().game_rps_ready, 'Y');
+			set_timeout(900000, closure(){
+				clear_value(player().game_rps_ready);
+				msg(colorize('&b이제 다시 가위바위보를 하실 수 있습니다&o!'));
+			});
+			} else {
+			msg(colorize('&c15분 후 다시 하실 수 있습니다.'));
+		}
+	}
+<<<

@@ -1,0 +1,18 @@
+#WIZserver CommandHelper sources
+#Lift
+
+#aliases.msa
+*:/lift [$o = '']= >>>
+	if($o == 'up') {
+		@ploc = ploc(player());
+		@y = @ploc[y];
+		@y = add(@y,5);
+		sudo('/tppos '.floor(@ploc[x]).' '.floor(@y).' '.floor(@ploc[z]));
+	}
+	if($o == 'down') {
+		@ploc = ploc(player());
+		@y = @ploc[y];
+		@y = subtract(@y,3);
+		sudo('/tppos '.floor(@ploc[x]).' '.floor(@y).' '.floor(@ploc[z]));
+	}
+<<<

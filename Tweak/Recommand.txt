@@ -1,0 +1,20 @@
+#WIZserver CommandHelper sources
+#Recommand
+
+#aliases.msa
+*:/추천 [$p = '']= >>>
+	if(get_value(player().service_recommand_status) != 'Y') {	
+		if($p != player()) {
+			acc_add(player(),500);
+			acc_add($p,500);
+			store_value(player().service_recommand, $p);
+			store_value(player().service_recommand_status, 'Y');
+			broadcast(colorize('&6[&e추천&6] '.player().'님께서 '.$p.'님을 추천하셨습니다&o!'));
+			broadcast(colorize('&6[&e추천&6] '.player().'님, '.$p.'님께서 추천으로 500 크레딧을 각각 획득하셨습니다&o!'));
+			} else {
+			msg(colorize('&c자기 자신을 추천할 수 없습니다.'));
+		}
+		} else {
+		msg(colorize('&c이미 '.get_value(player().service_recommand).'님을 추천하셨습니다.'));
+	}
+<<<

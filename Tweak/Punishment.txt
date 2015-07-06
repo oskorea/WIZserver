@@ -1,0 +1,54 @@
+#WIZserver CommandHelper sources
+#Punishment
+
+#aliases.msa
+*:/ban [$p = ''] [$ = '']= >>>
+	if(has_permission(player(), 'essentials.ban') == true) {
+		run('/ban '.$p.' '.$.'');
+		run('/banip '.$p.'');
+		broadcast(colorize('&4[&c처벌&4] &7'.$p.'님께서 영구 밴 조치되셨습니다. 사유/설명: '.$.''));
+		@reason = '&4[&c밴&4] &6'.$.' &f/ http://cafe.naver.com/wizss';
+		if(get_value($p.ban_1) != 'Y') {
+			store_value($p.ban_1,'Y');
+			query(ws, 'INSERT INTO `wiz-wizserver`.`player_punishment` (`playername`, `last`, `details`) VALUES (?, ?, ?)',$p,'밴',@reason);
+			} else {
+			query(ws, 'UPDATE `wiz-wizserver`.`player_punishment` SET `last` = ? WHERE `playername` = ?', '밴', $p);
+			query(ws, 'UPDATE `wiz-wizserver`.`player_punishment` SET `details` = ? WHERE `playername` = ?', @reason, $p);
+		}
+		} else {
+		msg(colorize('&cError'));
+	}
+<<<
+*:/mute [$p = ''] [$t = ''] [$ = '']= >>>
+	if(has_permission(player(), 'essentials.mute') == true) {
+		if($ == '') {
+			@reason = '사유 미정';
+			} else {
+			@reason = $;
+		}
+		if($p == '') {
+			msg(colorize('&4[&c사용 법&4] &7/mute <플레이어> <시간> <사유/설명>'));
+		}
+		if($t == '') {
+			run('/mute '.$p.' '.$t.'');
+			broadcast(colorize('&4[&c처벌&4] &7'.$p.'님의 벙어리가 해제되었습니다.'));
+		}
+		if($t != '') {
+			if($ != '') {
+				run('/mute '.$p.' '.$t.'');
+				broadcast(colorize('&4[&c처벌&4] &7'.$p.'님께서 벙어리 조치되셨습니다. 사유/설명: '.@reason.''));
+				if(get_value($p.ban_1) != 'Y') {
+					store_value($p.ban_1,'Y');
+					query(ws, 'INSERT INTO `wiz-wizserver`.`player_punishment` (`playername`, `last`, `details`) VALUES (?, ?, ?)',$p,'벙어리',$);
+					} else {
+					query(ws, 'UPDATE `wiz-wizserver`.`player_punishment` SET `last` = ? WHERE `playername` = ?', '벙어리', $p);
+					query(ws, 'UPDATE `wiz-wizserver`.`player_punishment` SET `details` = ? WHERE `playername` = ?', $, $p);
+				}
+				} else {
+				msg(colorize('&c사유는 필수입니다.'));
+			}
+		}
+		} else {
+		msg(colorize('&cError'));
+	}
+<<<

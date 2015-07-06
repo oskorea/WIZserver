@@ -1,0 +1,63 @@
+#WIZserver CommandHelper sources
+#WS
+
+#main.ms
+bind(async_player_chat, null, array(velocity: high), @e,
+	if(get_value(@e[player].chat) == 'Y') {
+		# 옵션 지정
+		if(player() == 'ForceDP' || player() == 'IN_Earth') {
+			@option = ‘1’;
+			} else {
+			@option = '1';
+		}
+	
+		# 신 소스 / 20150515
+		if(@option == '1') {
+			@get_count = get_value(player().chat_mute_count);
+			@new_count = add(@get_count,1);
+			store_value(player().chat_mute_count,@new_count);
+			@get_count = get_value(player().chat_mute_count);
+			@credit = acc_balance(player());
+			@take_credit = multiply(@get_count, 100);
+			if(@credit <= @take_credit) {
+				runas(~console, '/mute '.@e[player].' '.@get_count.'m');
+				broadcast(colorize('&4[&c처벌&4] &7'.@e[player].'님께서 '.@get_count.'분간 벙어리 조치되셨습니다. 사유/설명: 단타 또는 도배'));
+				if(get_value($p.ban_1) != 'Y') {
+					store_value($p.ban_1,'Y');
+					query(ws, 'INSERT INTO `wiz-wizserver`.`player_punishment` (`playername`, `last`, `details`) VALUES (?, ?, ?)',@e[player],'벙어리','단타 또는 도배');
+					} else {
+					query(ws, 'UPDATE `wiz-wizserver`.`player_punishment` SET `last` = ? WHERE `playername` = ?', '벙어리', @e[player]);
+					query(ws, 'UPDATE `wiz-wizserver`.`player_punishment` SET `details` = ? WHERE `playername` = ?', '단타 또는 도배', @e[player]);
+				}
+				} else {
+				acc_subtract(player(),@take_credit);
+				broadcast(colorize('&4[&c처벌&4] &7'.@e[player].'님께서 '.@take_credit.' 크레딧을 착감당하셨습니다. 사유/설명: 단타 또는 도배'));
+			}
+		}
+		
+		# 구 소스 / 20150515 이전
+		if(@option == '2') {
+			if(get_value(@e[player].chat_mute) == '1') {
+				runas(~console, '/mute '.@e[player].' 30m');
+				broadcast(colorize('&4[&c처벌&4] &7'.@e[player].'님께서 30분간 벙어리 조치되셨습니다. 사유/설명: 단타 또는 도배'));
+				if(get_value($p.ban_1) != 'Y') {
+					store_value($p.ban_1,'Y');
+					query(ws, 'INSERT INTO `wiz-wizserver`.`player_punishment` (`playername`, `last`, `details`) VALUES (?, ?, ?)',@e[player],'벙어리','단타 또는 도배');
+					} else {
+					query(ws, 'UPDATE `wiz-wizserver`.`player_punishment` SET `last` = ? WHERE `playername` = ?', '벙어리', @e[player]);
+					query(ws, 'UPDATE `wiz-wizserver`.`player_punishment` SET `details` = ? WHERE `playername` = ?', '단타 또는 도배', @e[player]);
+				}
+				clear_value(@e[player].chat_mute);
+				} else {
+				store_value(@e[player].chat_mute, '1');
+				runas(~console, '/mute '.@e[player].' 5m');
+				broadcast(colorize('&4[&c처벌&4] &7'.@e[player].'님께서 5분간 벙어리 조치되셨습니다. 사유/설명: 단타 또는 도배 경고'));
+			}
+		}
+	}
+	store_value(@e[player].chat, 'Y');
+	set_timeout(5000, closure(){
+		clear_value(@e[player].chat);
+		msg(colorize('&a당신은 이제 채팅하실 수 있습니다.'));
+	});
+)
