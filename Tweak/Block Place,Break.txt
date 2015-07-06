@@ -1,0 +1,14 @@
+#WIZserver CommandHelper sources
+#Block Place,Break
+
+#main.ms
+bind(block_place, null, null, @event,
+	@get_block_place = get_value(player().achievements_field_block_place);
+	@add = add(@get_block_place,'1');
+	store_value(player().achievements_field_block_place,@add);
+)
+bind(block_break, null, null, @event,
+	@get_block_break = get_value(player().achievements_field_block_break);
+	@add = add(@get_block_break,'1');
+	store_value(player().achievements_field_block_break,@add);
+)

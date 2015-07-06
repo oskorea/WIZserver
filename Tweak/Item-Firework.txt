@@ -1,0 +1,37 @@
+#WIZserver CommandHelper sources
+#Item-Firework
+
+#main.ms
+bind(player_interact, null, null, @e,
+	if(pinfo(player(), 6) != '0:-1') {
+		@inv = pinv(player(), pinfo(player(), 15));
+		@inv = array_get(@inv[type]);
+	}
+	if(@inv == '385') {
+		@inv = pinv(player(), pinfo(player(), 15));
+		@meta = @inv[meta];
+		if(@meta[display] == color(red).'Fireball' && @meta[lore][0] == '클릭 또는 우클릭시 불과 폭탄이 발사됩니다.') {
+			if(pinfo(player(), 7) == 'world_Dungeon') {
+				if(get_value(player().item_fireball) != 'Y') {
+					store_value(player().item_fireball, 'Y');
+					msg('');
+					msg(colorize('&4[&c쿨타임&4] &6Fireball 사용 2초 남음'));
+					make_effect(ploc(player()), CLICK2, 1);
+					sudo('/fireball');
+					set_timeout(1000, closure(){
+						msg(colorize('&4[&c쿨타임&4] &6Fireball 사용 1초 남음'));
+						make_effect(ploc(player()), CLICK2, 1);
+					});
+					set_timeout(2000, closure(){
+						msg(colorize('&3[&b사용 가능&3] &6이제 Fireball 사용이 가능합니다&o!'));
+						clear_value(player().item_fireball);
+						make_effect(ploc(player()), BOW_FIRE, 1);
+						set_timeout(170, closure(){
+							make_effect(ploc(player()), BOW_FIRE, 1);
+						});
+					});
+				}
+			}
+		}
+	}
+)

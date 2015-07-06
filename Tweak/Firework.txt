@@ -1,0 +1,33 @@
+#WIZserver CommandHelper sources
+#Firework
+
+#auto_include.ms
+proc(_use_firework, @p, @c,
+	if(@c == 'RED') {
+		launch_firework(ploc(@p),array(flicker: true, trail: true, colors: array('RED'), fade: array('RED'), type: BALL_LARGE))
+		} else {
+		if(@c == 'BLUE') {
+			launch_firework(ploc(@p),array(flicker: true, trail: true, colors: array('BLUE'), fade: array('BLUE'), type: BALL_LARGE))
+			} else {
+			if(@c == 'GREEN') {
+				launch_firework(ploc(@p),array(flicker: true, trail: true, colors: array('GREEN'), fade: array('GREEN'), type: BALL_LARGE))
+				} else {
+				if(@c == 'PURPLE') {
+					launch_firework(ploc(@p),array(flicker: true, trail: true, colors: array('PURPLE'), fade: array('PURPLE'), type: BALL_LARGE))
+					} else {
+					if(@c == 'WHITE') {
+						launch_firework(ploc(@p),array(flicker: true, trail: true, colors: array('WHITE'), fade: array('WHITE'), type: BALL_LARGE))
+						} else {
+						if(@c == 'BLACK') {
+							launch_firework(ploc(@p),array(flicker: true, trail: true, colors: array('BLACK'), fade: array('BLACK'), type: BALL_LARGE))
+							} else {
+							if(@c == 'YELLOW') {
+								launch_firework(ploc(@p),array(flicker: true, trail: true, colors: array('YELLOW'), fade: array('YELLOW'), type: BALL_LARGE))
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+)
